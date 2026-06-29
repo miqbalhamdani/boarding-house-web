@@ -16,6 +16,6 @@ export function useLogout(role: AuthRole) {
     clearAuthCookies(role);
     clearSession();
     queryClient.clear();
-    router.replace(role === "owner" ? "/login" : "/tenant/login");
+    router.replace(role === "owner" ? "/owner/login" : "/login");
   }, [role, router, queryClient, clearSession]);
 }

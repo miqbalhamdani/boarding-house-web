@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -13,17 +12,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AuthFormField } from "@/components/auth/auth-form-field";
-import { useOwnerLogin } from "@/hooks/auth/use-owner-login";
+import { useTenantLogin } from "@/hooks/auth/use-tenant-login";
 import { apiFieldErrors } from "@/lib/api/errors";
 import {
   fieldErrors,
-  safeParseOwnerLogin,
+  safeParseTenantLogin,
 } from "@/lib/validation/auth";
 
-export default function OwnerLoginPage() {
-  const login = useOwnerLogin();
+export default function TenantLoginPage() {
+  const login = useTenantLogin();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  // Client-side validation takes precedence; fall back to server field errors.
   const serverErrors = apiFieldErrors(login.error);
   const errorFor = (name: string) => errors[name] ?? serverErrors[name];
 
@@ -34,7 +32,7 @@ export default function OwnerLoginPage() {
       email: String(form.get("email") ?? ""),
       password: String(form.get("password") ?? ""),
     };
-    const result = safeParseOwnerLogin(input);
+    const result = safeParseTenantLogin(input);
     if (!result.success) {
       setErrors(fieldErrors(result.issues));
       return;
@@ -47,9 +45,9 @@ export default function OwnerLoginPage() {
     <main className="flex min-h-screen items-center justify-center p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Owner sign in</CardTitle>
+          <CardTitle className="text-2xl">Tenant sign in</CardTitle>
           <CardDescription>
-            Manage your rooms, tenants, and bills.
+            View your room, bills, and payments.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit} noValidate>
@@ -77,7 +75,7 @@ export default function OwnerLoginPage() {
               error={errorFor("password")}
             />
           </CardContent>
-          <CardFooter className="mt-6 flex-col gap-4">
+          <CardFooter className="mt-6">
             <Button
               type="submit"
               size="lg"
@@ -86,12 +84,6 @@ export default function OwnerLoginPage() {
             >
               {login.isPending ? "Signing in…" : "Sign in"}
             </Button>
-            <p className="text-sm text-muted-foreground">
-              New here?{" "}
-              <Link href="/register" className="text-primary underline">
-                Create an owner account
-              </Link>
-            </p>
           </CardFooter>
         </form>
       </Card>

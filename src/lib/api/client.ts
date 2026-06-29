@@ -9,7 +9,7 @@ import {
 } from "@/lib/auth/cookies";
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/v1";
 
 /** Common success envelope: `{ "data": {...}, "message": "Success" }`. */
 export interface ApiResponse<T> {
@@ -38,7 +38,7 @@ async function parseJson(res: Response): Promise<unknown> {
 }
 
 function loginPathFor(role: AuthRole): string {
-  return role === "owner" ? "/login" : "/tenant/login";
+  return role === "owner" ? "/owner/login" : "/login";
 }
 
 /** In-flight refresh per role, so concurrent 401s share one refresh call. */

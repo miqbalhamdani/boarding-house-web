@@ -176,7 +176,7 @@ describe("apiFetch", () => {
       ApiError,
     );
     expect(getAccessToken("owner")).toBeUndefined();
-    expect(assign).toHaveBeenCalledWith("/login");
+    expect(assign).toHaveBeenCalledWith("/owner/login");
   });
 
   it("clears cookies and redirects when refresh fails", async () => {
@@ -198,6 +198,6 @@ describe("apiFetch", () => {
       ApiError,
     );
     expect(getAccessToken("owner")).toBeUndefined();
-    expect(assign).toHaveBeenCalledWith("/login");
+    expect(assign).toHaveBeenCalledWith("/owner/login");
   });
 });

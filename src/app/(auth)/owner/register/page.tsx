@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -12,54 +13,70 @@ import {
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AuthFormField } from "@/components/auth/auth-form-field";
-import { useTenantLogin } from "@/hooks/auth/use-tenant-login";
+import { useOwnerRegister } from "@/hooks/auth/use-owner-register";
 import { apiFieldErrors } from "@/lib/api/errors";
 import {
   fieldErrors,
-  safeParseTenantLogin,
+  safeParseOwnerRegister,
 } from "@/lib/validation/auth";
 
-export default function TenantLoginPage() {
-  const login = useTenantLogin();
+export default function OwnerRegisterPage() {
+  const register = useOwnerRegister();
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const serverErrors = apiFieldErrors(login.error);
+  // Client-side validation takes precedence; fall back to server field errors.
+  const serverErrors = apiFieldErrors(register.error);
   const errorFor = (name: string) => errors[name] ?? serverErrors[name];
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const input = {
+      business_name: String(form.get("business_name") ?? ""),
+      full_name: String(form.get("full_name") ?? ""),
       email: String(form.get("email") ?? ""),
+      phone_number: String(form.get("phone_number") ?? ""),
       password: String(form.get("password") ?? ""),
     };
-    const result = safeParseTenantLogin(input);
+    const result = safeParseOwnerRegister(input);
     if (!result.success) {
       setErrors(fieldErrors(result.issues));
       return;
     }
     setErrors({});
-    login.mutate(result.output);
+    register.mutate(result.output);
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center p-6">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Tenant sign in</CardTitle>
+          <CardTitle className="text-2xl">Create owner account</CardTitle>
           <CardDescription>
-            View your room, bills, and payments.
+            Set up your boarding-house workspace.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit} noValidate>
           <CardContent className="grid gap-5">
-            {login.isError ? (
+            {register.isError ? (
               <Alert variant="destructive">
-                <AlertTitle>Could not sign in</AlertTitle>
+                <AlertTitle>Could not register</AlertTitle>
                 <AlertDescription>
-                  {(login.error as Error).message}
+                  {(register.error as Error).message}
                 </AlertDescription>
               </Alert>
             ) : null}
+            <AuthFormField
+              id="business_name"
+              label="Business name"
+              autoComplete="organization"
+              error={errorFor("business_name")}
+            />
+            <AuthFormField
+              id="full_name"
+              label="Your full name"
+              autoComplete="name"
+              error={errorFor("full_name")}
+            />
             <AuthFormField
               id="email"
               label="Email"
@@ -68,22 +85,35 @@ export default function TenantLoginPage() {
               error={errorFor("email")}
             />
             <AuthFormField
+              id="phone_number"
+              label="Phone number"
+              type="tel"
+              autoComplete="tel"
+              error={errorFor("phone_number")}
+            />
+            <AuthFormField
               id="password"
               label="Password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               error={errorFor("password")}
             />
           </CardContent>
-          <CardFooter className="mt-6">
+          <CardFooter className="mt-6 flex-col gap-4">
             <Button
               type="submit"
               size="lg"
               className="w-full"
-              disabled={login.isPending}
+              disabled={register.isPending}
             >
-              {login.isPending ? "Signing in…" : "Sign in"}
+              {register.isPending ? "Creating account…" : "Create account"}
             </Button>
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link href="/owner/login" className="text-primary underline">
+                Sign in
+              </Link>
+            </p>
           </CardFooter>
         </form>
       </Card>
