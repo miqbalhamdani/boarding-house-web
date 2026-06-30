@@ -2,8 +2,18 @@
 
 ## Public Pages
 
-### Login Page
+### Tenant Login Page
 Path: `/login`
+
+The primary public entry. Used by tenants.
+
+Main elements:
+- email input
+- password input
+- login button
+
+### Owner Login Page
+Path: `/owner/login`
 
 Used by owner/admin.
 
@@ -11,10 +21,10 @@ Main elements:
 - email input
 - password input
 - login button
-- register link
+- register link (→ `/owner/register`)
 
 ### Owner Register Page
-Path: `/register`
+Path: `/owner/register`
 
 Main elements:
 - business name
@@ -22,14 +32,7 @@ Main elements:
 - email
 - phone number
 - password
-
-### Tenant Login Page
-Path: `/tenant/login`
-
-Main elements:
-- email input
-- password input
-- login button
+- sign-in link (→ `/owner/login`)
 
 ## Owner App Pages
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Lexend, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "./providers";
 
 // Lexend is designed to improve reading proficiency — a good fit for an
 // elderly audience. Bound to --font-sans, which globals.css maps to font-sans.
@@ -39,7 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Providers>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>
