@@ -5,23 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LogoutButton } from "@/components/auth/logout-button";
 
 /**
  * Minimal owner landing page. The full dashboard belongs to a later module;
- * this confirms the owner auth flow and provides a sign-out action.
+ * this confirms the owner auth flow. Navigation and sign-out live in the
+ * shared owner layout.
  */
 export default function OwnerDashboardPage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 sm:p-12">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Owner dashboard</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            You are signed in.
-          </p>
-        </div>
-        <LogoutButton role="owner" />
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Owner dashboard</h1>
+        <p className="mt-2 text-lg text-muted-foreground">You are signed in.</p>
       </div>
       <Card>
         <CardHeader>
@@ -33,6 +28,6 @@ export default function OwnerDashboardPage() {
         </CardHeader>
         <CardContent />
       </Card>
-    </main>
+    </div>
   );
 }

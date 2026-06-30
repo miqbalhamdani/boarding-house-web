@@ -13,4 +13,15 @@ export function fromNow(date: string | number | Date): string {
   return dayjs(date).fromNow();
 }
 
+const idrFormatter = new Intl.NumberFormat("id-ID", {
+  style: "currency",
+  currency: "IDR",
+  maximumFractionDigits: 0,
+});
+
+/** Format an integer rupiah amount as IDR, e.g. 2000000 → "Rp 2.000.000". */
+export function formatIDR(amount: number): string {
+  return idrFormatter.format(amount);
+}
+
 export { dayjs };
