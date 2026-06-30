@@ -24,10 +24,14 @@ import type { Room } from "@/services/rooms";
 /** Statuses that must not be deleted (BR: occupied/reserved rooms in use). */
 const UNDELETABLE = new Set<Room["status"]>(["occupied", "reserved"]);
 
+type TriggerSize = "sm" | "default" | "lg";
+
 export interface DeleteRoomDialogProps {
   room: Pick<Room, "id" | "room_number" | "status">;
   /** Called after a successful delete (e.g. to navigate away from detail). */
   onDeleted?: () => void;
+  /** Size of the trigger button. Compact ("sm") inside table rows. */
+  triggerSize?: TriggerSize;
 }
 
 /**
@@ -36,7 +40,11 @@ export interface DeleteRoomDialogProps {
  * confirm button is disabled while the request is in flight to block double
  * submits.
  */
-export function DeleteRoomDialog({ room, onDeleted }: DeleteRoomDialogProps) {
+export function DeleteRoomDialog({
+  room,
+  onDeleted,
+  triggerSize = "lg",
+}: DeleteRoomDialogProps) {
   const remove = useDeleteRoom();
   const blocked = UNDELETABLE.has(room.status);
 
@@ -46,7 +54,7 @@ export function DeleteRoomDialog({ room, onDeleted }: DeleteRoomDialogProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <span tabIndex={0}>
-              <Button variant="destructive" size="lg" disabled>
+              <Button variant="destructive" size={triggerSize} disabled>
                 Delete
               </Button>
             </span>
@@ -68,7 +76,7 @@ export function DeleteRoomDialog({ room, onDeleted }: DeleteRoomDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="lg">
+        <Button variant="destructive" size={triggerSize}>
           Delete
         </Button>
       </AlertDialogTrigger>

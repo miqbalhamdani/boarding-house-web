@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { SlidersHorizontal } from "lucide-react";
 import {
   type ColumnDef,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -20,6 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -43,12 +53,20 @@ import type { Room } from "@/services/rooms";
 const PAGE_SIZE = 20;
 const ALL = "all";
 
+/** Friendly labels for the column-visibility menu. */
+const COLUMN_LABELS: Record<string, string> = {
+  room_name: "Name",
+  monthly_rent: "Monthly rent",
+  status: "Status",
+};
+
 export default function RoomsListPage() {
   const [statusFilter, setStatusFilter] = useState<RoomStatus | typeof ALL>(
     ALL,
   );
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const search = useDebouncedValue(searchInput, 300);
 
   const params = useMemo(
@@ -73,6 +91,7 @@ export default function RoomsListPage() {
       {
         accessorKey: "room_number",
         header: "Room no.",
+        enableHiding: false,
         cell: ({ row }) => (
           <Link
             href={`/rooms/${row.original.id}`}
@@ -96,12 +115,13 @@ export default function RoomsListPage() {
       {
         id: "actions",
         header: "",
+        enableHiding: false,
         cell: ({ row }) => (
           <div className="flex justify-end gap-2">
             <Button asChild variant="outline" size="sm">
               <Link href={`/rooms/${row.original.id}/edit`}>Edit</Link>
             </Button>
-            <DeleteRoomDialog room={row.original} />
+            <DeleteRoomDialog room={row.original} triggerSize="sm" />
           </div>
         ),
       },
@@ -113,6 +133,8 @@ export default function RoomsListPage() {
     data: rooms,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    state: { columnVisibility },
   });
 
   function handleStatusChange(value: string) {
@@ -139,33 +161,63 @@ export default function RoomsListPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="search">Search</Label>
-          <Input
-            id="search"
-            placeholder="Room number or name"
-            value={searchInput}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-64"
-          />
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="search">Search</Label>
+            <Input
+              id="search"
+              placeholder="Room number or name"
+              value={searchInput}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="w-64"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="status-filter">Status</Label>
+            <Select value={statusFilter} onValueChange={handleStatusChange}>
+              <SelectTrigger id="status-filter" className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>All statuses</SelectItem>
+                {ROOM_STATUSES.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {ROOM_STATUS_LABELS[value]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="grid gap-2">
-          <Label htmlFor="status-filter">Status</Label>
-          <Select value={statusFilter} onValueChange={handleStatusChange}>
-            <SelectTrigger id="status-filter" className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={ALL}>All statuses</SelectItem>
-              {ROOM_STATUSES.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {ROOM_STATUS_LABELS[value]}
-                </SelectItem>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <SlidersHorizontal className="size-4" />
+              Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) =>
+                    column.toggleVisibility(Boolean(value))
+                  }
+                >
+                  {COLUMN_LABELS[column.id] ?? column.id}
+                </DropdownMenuCheckboxItem>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {isError ? (
