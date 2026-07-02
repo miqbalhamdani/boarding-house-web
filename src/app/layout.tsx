@@ -18,8 +18,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "my-app",
-  description: "Next.js + shadcn/ui + Tailwind + valibot + dayjs + TanStack Table + zustand",
+  title: {
+    default: "Boarding House",
+    template: "%s · Boarding House",
+  },
+  description: "Manage rooms, tenants, billing, and payments for your boarding house.",
 };
 
 export default function RootLayout({

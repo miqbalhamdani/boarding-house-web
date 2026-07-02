@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AuthFormField } from "@/components/auth/auth-form-field";
+import { FormField } from "@/components/form-field";
 import {
   Select,
   SelectContent,
@@ -52,7 +52,7 @@ export function RoomForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const serverErrors = apiFieldErrors(error);
   const errorFor = (name: string) => errors[name] ?? serverErrors[name];
-  const hasGeneralError = Boolean(error);
+  const statusError = errorFor("status");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -77,7 +77,7 @@ export function RoomForm({
 
   return (
     <form onSubmit={handleSubmit} noValidate className="grid max-w-xl gap-5">
-      {hasGeneralError ? (
+      {error ? (
         <Alert variant="destructive">
           <AlertTitle>
             {mode === "create"
@@ -88,19 +88,19 @@ export function RoomForm({
         </Alert>
       ) : null}
 
-      <AuthFormField
+      <FormField
         id="room_number"
         label="Room number"
         defaultValue={defaultValues?.room_number}
         error={errorFor("room_number")}
       />
-      <AuthFormField
+      <FormField
         id="room_name"
         label="Room name"
         defaultValue={defaultValues?.room_name}
         error={errorFor("room_name")}
       />
-      <AuthFormField
+      <FormField
         id="monthly_rent"
         label="Monthly rent (IDR)"
         type="number"
@@ -116,7 +116,12 @@ export function RoomForm({
           value={status}
           onValueChange={(value) => setStatus(value as RoomStatus)}
         >
-          <SelectTrigger id="status" className="w-full">
+          <SelectTrigger
+            id="status"
+            className="w-full"
+            aria-invalid={statusError ? true : undefined}
+            aria-describedby={statusError ? "status-error" : undefined}
+          >
             <SelectValue placeholder="Select status" />
           </SelectTrigger>
           <SelectContent>
@@ -127,8 +132,10 @@ export function RoomForm({
             ))}
           </SelectContent>
         </Select>
-        {errorFor("status") ? (
-          <p className="text-sm text-destructive">{errorFor("status")}</p>
+        {statusError ? (
+          <p id="status-error" className="text-sm text-destructive">
+            {statusError}
+          </p>
         ) : null}
       </div>
 

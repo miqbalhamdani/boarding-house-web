@@ -2,28 +2,18 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  DescriptionList,
+  DescriptionItem,
+} from "@/components/description-list";
 import { RoomStatusBadge } from "@/components/rooms/room-status-badge";
 import { DeleteRoomDialog } from "@/components/rooms/delete-room-dialog";
 import { useRoom } from "@/hooks/rooms/use-room";
 import { formatDate, formatIDR } from "@/lib/format";
-
-function Field({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="grid gap-1">
-      <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="text-lg">{value}</dd>
-    </div>
-  );
-}
 
 export default function RoomDetailPage() {
   const params = useParams<{ id: string }>();
@@ -58,9 +48,7 @@ export default function RoomDetailPage() {
       ) : !room ? (
         <Alert>
           <AlertTitle>Room not found</AlertTitle>
-          <AlertDescription>
-            This room may have been removed.
-          </AlertDescription>
+          <AlertDescription>This room may have been removed.</AlertDescription>
         </Alert>
       ) : (
         <>
@@ -87,23 +75,26 @@ export default function RoomDetailPage() {
               <CardTitle>Room information</CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="grid gap-5 sm:grid-cols-2">
-                <Field label="Room number" value={room.room_number} />
-                <Field label="Room name" value={room.room_name} />
-                <Field
-                  label="Monthly rent"
-                  value={formatIDR(room.monthly_rent)}
-                />
-                <Field
-                  label="Status"
-                  value={<RoomStatusBadge status={room.status} />}
-                />
-                <Field
-                  label="Notes"
-                  value={room.notes?.trim() ? room.notes : "—"}
-                />
-                <Field label="Created" value={formatDate(room.created_at)} />
-              </dl>
+              <DescriptionList className="sm:grid-cols-2">
+                <DescriptionItem term="Room number">
+                  {room.room_number}
+                </DescriptionItem>
+                <DescriptionItem term="Room name">
+                  {room.room_name}
+                </DescriptionItem>
+                <DescriptionItem term="Monthly rent">
+                  {formatIDR(room.monthly_rent)}
+                </DescriptionItem>
+                <DescriptionItem term="Status">
+                  <RoomStatusBadge status={room.status} />
+                </DescriptionItem>
+                <DescriptionItem term="Notes">
+                  {room.notes?.trim() ? room.notes : "—"}
+                </DescriptionItem>
+                <DescriptionItem term="Created">
+                  {formatDate(room.created_at)}
+                </DescriptionItem>
+              </DescriptionList>
             </CardContent>
           </Card>
         </>

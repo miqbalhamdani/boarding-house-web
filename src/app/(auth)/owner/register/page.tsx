@@ -12,13 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AuthFormField } from "@/components/auth/auth-form-field";
+import { FormField } from "@/components/form-field";
 import { useOwnerRegister } from "@/hooks/auth/use-owner-register";
 import { apiFieldErrors } from "@/lib/api/errors";
-import {
-  fieldErrors,
-  safeParseOwnerRegister,
-} from "@/lib/validation/auth";
+import { fieldErrors, safeParseOwnerRegister } from "@/lib/validation/auth";
 
 export default function OwnerRegisterPage() {
   const register = useOwnerRegister();
@@ -47,76 +44,72 @@ export default function OwnerRegisterPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Create owner account</CardTitle>
-          <CardDescription>
-            Set up your boarding-house workspace.
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit} noValidate>
-          <CardContent className="grid gap-5">
-            {register.isError ? (
-              <Alert variant="destructive">
-                <AlertTitle>Could not register</AlertTitle>
-                <AlertDescription>
-                  {(register.error as Error).message}
-                </AlertDescription>
-              </Alert>
-            ) : null}
-            <AuthFormField
-              id="business_name"
-              label="Business name"
-              autoComplete="organization"
-              error={errorFor("business_name")}
-            />
-            <AuthFormField
-              id="full_name"
-              label="Your full name"
-              autoComplete="name"
-              error={errorFor("full_name")}
-            />
-            <AuthFormField
-              id="email"
-              label="Email"
-              type="email"
-              autoComplete="email"
-              error={errorFor("email")}
-            />
-            <AuthFormField
-              id="phone_number"
-              label="Phone number"
-              type="tel"
-              autoComplete="tel"
-              error={errorFor("phone_number")}
-            />
-            <AuthFormField
-              id="password"
-              label="Password"
-              type="password"
-              autoComplete="new-password"
-              error={errorFor("password")}
-            />
-          </CardContent>
-          <CardFooter className="mt-6 flex-col gap-4">
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full"
-              disabled={register.isPending}
-            >
-              {register.isPending ? "Creating account…" : "Create account"}
-            </Button>
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/owner/login" className="text-primary underline">
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
-    </main>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle className="text-2xl">Create owner account</CardTitle>
+        <CardDescription>Set up your boarding-house workspace.</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit} noValidate>
+        <CardContent className="grid gap-5">
+          {register.isError ? (
+            <Alert variant="destructive">
+              <AlertTitle>Could not register</AlertTitle>
+              <AlertDescription>
+                {(register.error as Error).message}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+          <FormField
+            id="business_name"
+            label="Business name"
+            autoComplete="organization"
+            error={errorFor("business_name")}
+          />
+          <FormField
+            id="full_name"
+            label="Your full name"
+            autoComplete="name"
+            error={errorFor("full_name")}
+          />
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            autoComplete="email"
+            error={errorFor("email")}
+          />
+          <FormField
+            id="phone_number"
+            label="Phone number"
+            type="tel"
+            autoComplete="tel"
+            error={errorFor("phone_number")}
+          />
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            error={errorFor("password")}
+          />
+        </CardContent>
+        <CardFooter className="mt-6 flex-col gap-4">
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={register.isPending}
+          >
+            {register.isPending ? "Creating account…" : "Create account"}
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/owner/login" className="text-primary underline">
+              Sign in
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
   );
 }

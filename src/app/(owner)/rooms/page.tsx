@@ -3,17 +3,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { SlidersHorizontal } from "lucide-react";
-import {
-  type ColumnDef,
-  type VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
@@ -31,13 +24,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
+import { DataTable } from "@/components/data-table";
 import { RoomStatusBadge } from "@/components/rooms/room-status-badge";
 import { DeleteRoomDialog } from "@/components/rooms/delete-room-dialog";
 import { useRooms } from "@/hooks/rooms/use-rooms";
@@ -66,7 +57,6 @@ export default function RoomsListPage() {
   );
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const search = useDebouncedValue(searchInput, 300);
 
   const params = useMemo(
@@ -116,6 +106,7 @@ export default function RoomsListPage() {
         id: "actions",
         header: "",
         enableHiding: false,
+        enableSorting: false,
         cell: ({ row }) => (
           <div className="flex justify-end gap-2">
             <Button asChild variant="outline" size="sm">
@@ -128,14 +119,6 @@ export default function RoomsListPage() {
     ],
     [],
   );
-
-  const table = useReactTable({
-    data: rooms,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    state: { columnVisibility },
-  });
 
   function handleStatusChange(value: string) {
     setStatusFilter(value as RoomStatus | typeof ALL);
@@ -161,65 +144,6 @@ export default function RoomsListPage() {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="search">Search</Label>
-            <Input
-              id="search"
-              placeholder="Room number or name"
-              value={searchInput}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-64"
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="status-filter">Status</Label>
-            <Select value={statusFilter} onValueChange={handleStatusChange}>
-              <SelectTrigger id="status-filter" className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ALL}>All statuses</SelectItem>
-                {ROOM_STATUSES.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {ROOM_STATUS_LABELS[value]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <SlidersHorizontal className="size-4" />
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(Boolean(value))
-                  }
-                >
-                  {COLUMN_LABELS[column.id] ?? column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
       {isError ? (
         <Alert variant="destructive">
           <AlertTitle>Could not load rooms</AlertTitle>
@@ -227,87 +151,105 @@ export default function RoomsListPage() {
         </Alert>
       ) : null}
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isPending ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  {columns.map((_col, j) => (
-                    <TableCell key={j}>
-                      <Skeleton className="h-5 w-full" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : rooms.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  No rooms found. Add your first room to get started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={rooms}
+        isLoading={isPending}
+        emptyMessage="No rooms found. Add your first room to get started."
+        toolbar={(table) => (
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="search">Search</Label>
+                <Input
+                  id="search"
+                  placeholder="Room number or name"
+                  value={searchInput}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-64"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="status-filter">Status</Label>
+                <Select value={statusFilter} onValueChange={handleStatusChange}>
+                  <SelectTrigger id="status-filter" className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={ALL}>All statuses</SelectItem>
+                    {ROOM_STATUSES.map((value) => (
+                      <SelectItem key={value} value={value}>
+                        {ROOM_STATUS_LABELS[value]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-      {total > 0 ? (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Page {page} of {totalPages} · {total} room{total === 1 ? "" : "s"}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1 || isPlaceholderData}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={page >= totalPages || isPlaceholderData}
-            >
-              Next
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <SlidersHorizontal className="size-4" />
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(Boolean(value))
+                      }
+                    >
+                      {COLUMN_LABELS[column.id] ?? column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </div>
-      ) : null}
+        )}
+        footer={
+          total > 0 ? (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Page {page} of {totalPages} · {total} room
+                {total === 1 ? "" : "s"}
+              </p>
+              <Pagination className="mx-0 w-auto justify-end">
+                <PaginationContent className="gap-2">
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page <= 1 || isPlaceholderData}
+                    >
+                      Previous
+                    </Button>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setPage((p) => p + 1)}
+                      disabled={page >= totalPages || isPlaceholderData}
+                    >
+                      Next
+                    </Button>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
