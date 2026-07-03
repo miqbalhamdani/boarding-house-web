@@ -25,8 +25,8 @@ Excluded:
 ## API Endpoints
 - `POST /auth/owner/register`
 - `POST /auth/owner/login`
-- `POST /auth/tenant/login`
-- `GET /tenant/me`
+- `POST /auth/login` (tenant login)
+- `GET /my-room` (tenant landing)
 
 ## Business Rules
 - Owner token must include owner user ID and owner ID.

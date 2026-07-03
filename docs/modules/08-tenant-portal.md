@@ -21,7 +21,7 @@ Excluded:
 
 ## API Endpoints
 - `GET /tenant/me`
-- `GET /tenant/my-room`
+- `GET /my-room`
 - `GET /tenant/bills`
 - `GET /tenant/bills/{bill_id}`
 - `POST /tenant/bills/{bill_id}/pay`
