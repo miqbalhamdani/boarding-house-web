@@ -39,10 +39,12 @@ export default function TenantLoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
+    <Card className="w-full shadow-sm">
+      <CardHeader className="text-center">
         <CardTitle className="text-2xl">Tenant sign in</CardTitle>
-        <CardDescription>View your room, bills, and payments.</CardDescription>
+        <CardDescription className="text-base">
+          View your room, bills, and payments.
+        </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit} noValidate>
         <CardContent className="grid gap-5">

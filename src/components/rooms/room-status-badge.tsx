@@ -1,21 +1,20 @@
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { ROOM_STATUS_LABELS, type RoomStatus } from "@/lib/validation/rooms";
 
-type BadgeVariant = React.ComponentProps<typeof Badge>["variant"];
-
-const STATUS_VARIANT: Record<RoomStatus, BadgeVariant> = {
-  available: "default",
-  reserved: "secondary",
-  occupied: "outline",
-  maintenance: "secondary",
-  inactive: "destructive",
+/** Maps each room status to a semantic tone (see StatusBadge). */
+const STATUS_TONE: Record<RoomStatus, StatusTone> = {
+  available: "success",
+  reserved: "info",
+  occupied: "brand",
+  maintenance: "warning",
+  inactive: "neutral",
 };
 
-/** Renders a room status as a coloured badge. Reused in list and detail. */
+/** Renders a room status as a coloured pill. Reused in list and detail. */
 export function RoomStatusBadge({ status }: { status: RoomStatus }) {
   return (
-    <Badge variant={STATUS_VARIANT[status]}>
+    <StatusBadge tone={STATUS_TONE[status]}>
       {ROOM_STATUS_LABELS[status]}
-    </Badge>
+    </StatusBadge>
   );
 }

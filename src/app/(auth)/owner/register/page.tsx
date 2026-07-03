@@ -44,10 +44,12 @@ export default function OwnerRegisterPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
+    <Card className="w-full shadow-sm">
+      <CardHeader className="text-center">
         <CardTitle className="text-2xl">Create owner account</CardTitle>
-        <CardDescription>Set up your boarding-house workspace.</CardDescription>
+        <CardDescription className="text-base">
+          Set up your boarding-house workspace.
+        </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit} noValidate>
         <CardContent className="grid gap-5">
@@ -102,9 +104,12 @@ export default function OwnerRegisterPage() {
           >
             {register.isPending ? "Creating account…" : "Create account"}
           </Button>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/owner/login" className="text-primary underline">
+            <Link
+              href="/owner/login"
+              className="font-medium text-primary underline underline-offset-4"
+            >
               Sign in
             </Link>
           </p>

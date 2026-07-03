@@ -83,7 +83,9 @@ export default function RoomDetailPage() {
                   {room.room_name}
                 </DescriptionItem>
                 <DescriptionItem term="Monthly rent">
-                  {formatIDR(room.monthly_rent)}
+                  <span className="tabular-nums">
+                    {formatIDR(room.monthly_rent)}
+                  </span>
                 </DescriptionItem>
                 <DescriptionItem term="Status">
                   <RoomStatusBadge status={room.status} />

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { RoomForm } from "@/components/rooms/room-form";
@@ -18,7 +19,7 @@ export default function EditRoomPage() {
       <div>
         <Link
           href={`/rooms/${params.id}`}
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          className="text-base text-muted-foreground underline-offset-4 hover:underline"
         >
           ← Back to room
         </Link>
@@ -42,19 +43,23 @@ export default function EditRoomPage() {
           <AlertDescription>This room may have been removed.</AlertDescription>
         </Alert>
       ) : (
-        <RoomForm
-          mode="edit"
-          defaultValues={{
-            room_number: room.room_number,
-            room_name: room.room_name,
-            monthly_rent: room.monthly_rent,
-            status: room.status,
-            notes: room.notes ?? undefined,
-          }}
-          onSubmit={(input) => update.mutate(input)}
-          isPending={update.isPending}
-          error={update.error}
-        />
+        <Card className="shadow-sm">
+          <CardContent className="pt-6">
+            <RoomForm
+              mode="edit"
+              defaultValues={{
+                room_number: room.room_number,
+                room_name: room.room_name,
+                monthly_rent: room.monthly_rent,
+                status: room.status,
+                notes: room.notes ?? undefined,
+              }}
+              onSubmit={(input) => update.mutate(input)}
+              isPending={update.isPending}
+              error={update.error}
+            />
+          </CardContent>
+        </Card>
       )}
     </div>
   );

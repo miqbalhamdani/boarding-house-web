@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, DoorOpen } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,7 +95,11 @@ export default function RoomsListPage() {
       {
         accessorKey: "monthly_rent",
         header: "Monthly rent",
-        cell: ({ row }) => formatIDR(row.original.monthly_rent),
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {formatIDR(row.original.monthly_rent)}
+          </span>
+        ),
       },
       {
         accessorKey: "status",
@@ -155,7 +159,22 @@ export default function RoomsListPage() {
         columns={columns}
         data={rooms}
         isLoading={isPending}
-        emptyMessage="No rooms found. Add your first room to get started."
+        emptyMessage={
+          <div className="flex flex-col items-center gap-4 py-6">
+            <span className="flex size-14 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <DoorOpen className="size-7" aria-hidden />
+            </span>
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">No rooms found</p>
+              <p className="text-base text-muted-foreground">
+                Add your first room to get started.
+              </p>
+            </div>
+            <Button asChild size="lg">
+              <Link href="/rooms/new">Add room</Link>
+            </Button>
+          </div>
+        }
         toolbar={(table) => (
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex flex-wrap items-end gap-4">

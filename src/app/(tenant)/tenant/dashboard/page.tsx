@@ -1,5 +1,6 @@
 "use client";
 
+import { BedDouble, Receipt, Wallet } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,6 +15,25 @@ import {
   DescriptionItem,
 } from "@/components/description-list";
 import { useTenantMe } from "@/hooks/auth/use-tenant-me";
+
+/** Portal modules that ship after auth; shown as informative placeholders. */
+const UPCOMING = [
+  {
+    title: "My room",
+    description: "Your assigned room and move-in details will appear here.",
+    icon: BedDouble,
+  },
+  {
+    title: "My bills",
+    description: "Monthly bills and their status will appear here.",
+    icon: Receipt,
+  },
+  {
+    title: "Payment history",
+    description: "Your confirmed payments will appear here.",
+    icon: Wallet,
+  },
+];
 
 /**
  * Minimal tenant portal landing. Confirms the tenant auth flow by loading the
@@ -66,6 +86,22 @@ export default function TenantDashboardPage() {
           )}
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        {UPCOMING.map(({ title, description, icon: Icon }) => (
+          <Card key={title}>
+            <CardHeader className="gap-2">
+              <span className="flex size-10 items-center justify-center rounded-lg bg-primary/12 text-primary">
+                <Icon className="size-5" aria-hidden />
+              </span>
+              <CardTitle className="text-xl">{title}</CardTitle>
+              <CardDescription className="text-base">
+                {description}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

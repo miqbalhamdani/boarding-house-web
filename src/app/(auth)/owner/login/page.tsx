@@ -41,10 +41,10 @@ export default function OwnerLoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
+    <Card className="w-full shadow-sm">
+      <CardHeader className="text-center">
         <CardTitle className="text-2xl">Owner sign in</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-base">
           Manage your rooms, tenants, and bills.
         </CardDescription>
       </CardHeader>
@@ -82,9 +82,12 @@ export default function OwnerLoginPage() {
           >
             {login.isPending ? "Signing in…" : "Sign in"}
           </Button>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             New here?{" "}
-            <Link href="/owner/register" className="text-primary underline">
+            <Link
+              href="/owner/register"
+              className="font-medium text-primary underline underline-offset-4"
+            >
               Create an owner account
             </Link>
           </p>
