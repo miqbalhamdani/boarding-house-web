@@ -6,7 +6,7 @@ import { toast } from "sonner"
 
 import { ApiClientError } from "@/lib/api/types"
 import { OWNER_HOME, TENANT_HOME } from "@/lib/auth/guard"
-import { setOwnerTokens, setTenantTokens } from "@/lib/auth/tokens"
+import { setProfile, setOwnerTokens, setTenantTokens } from "@/lib/auth/tokens"
 import {
   getMyRoom,
   loginOwner,
@@ -29,7 +29,9 @@ export function useOwnerRegister() {
     mutationFn: registerOwner,
     onSuccess: (data) => {
       setOwnerTokens(data.tokens)
-      setSession({ kind: "owner" })
+      const profile = { name: data.full_name, email: data.email }
+      setProfile("owner", profile)
+      setSession({ kind: "owner", ...profile })
       toast.success("Account created")
       router.replace(OWNER_HOME)
     },
@@ -45,7 +47,9 @@ export function useOwnerLogin() {
     mutationFn: loginOwner,
     onSuccess: (data) => {
       setOwnerTokens(data.tokens)
-      setSession({ kind: "owner" })
+      const profile = { name: data.full_name, email: data.email }
+      setProfile("owner", profile)
+      setSession({ kind: "owner", ...profile })
       toast.success("Welcome back")
       router.replace(OWNER_HOME)
     },
@@ -61,7 +65,10 @@ export function useTenantLogin() {
     mutationFn: loginTenant,
     onSuccess: (data) => {
       setTenantTokens(data.tokens)
-      setSession({ kind: "tenant" })
+      // Tenant login response carries no email; show the full name only.
+      const profile = { name: data.full_name, email: null }
+      setProfile("tenant", profile)
+      setSession({ kind: "tenant", ...profile })
       toast.success("Welcome back")
       router.replace(TENANT_HOME)
     },

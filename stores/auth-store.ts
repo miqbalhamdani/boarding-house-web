@@ -1,8 +1,17 @@
 import { create } from "zustand"
 
-import { clearTokens, getAccessToken } from "@/lib/auth/tokens"
+import {
+  clearProfile,
+  clearTokens,
+  getAccessToken,
+  getProfile,
+} from "@/lib/auth/tokens"
 
-export type Session = { kind: "owner" | "tenant" } | null
+export type Session = {
+  kind: "owner" | "tenant"
+  name: string
+  email: string | null
+} | null
 
 type AuthState = {
   session: Session
@@ -20,9 +29,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   setSession: (session) => set({ session }),
   hydrate: () => {
     if (getAccessToken("owner")) {
-      set({ session: { kind: "owner" } })
+      const p = getProfile("owner")
+      set({ session: { kind: "owner", name: p?.name ?? "", email: p?.email ?? null } })
     } else if (getAccessToken("tenant")) {
-      set({ session: { kind: "tenant" } })
+      const p = getProfile("tenant")
+      set({ session: { kind: "tenant", name: p?.name ?? "", email: p?.email ?? null } })
     } else {
       set({ session: null })
     }
@@ -30,6 +41,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     clearTokens("owner")
     clearTokens("tenant")
+    clearProfile("owner")
+    clearProfile("tenant")
     set({ session: null })
   },
 }))

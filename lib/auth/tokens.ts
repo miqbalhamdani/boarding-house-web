@@ -13,6 +13,20 @@ const COOKIE = {
   tenant: { access: "tenant_access_token", refresh: "tenant_refresh_token" },
 } as const
 
+// Display-only cookie: the account profile (name/email) returned by the login
+// response. The JWT carries no profile, so we persist the server's canonical
+// values here to show the signed-in identity in the UI after a reload. Non-secret
+// — same storage tradeoff as the tokens above.
+const PROFILE_COOKIE = {
+  owner: "owner_profile",
+  tenant: "tenant_profile",
+} as const
+
+export type Profile = {
+  name: string
+  email: string | null
+}
+
 // Access token lifetime is short but the cookie itself persists so a page
 // reload keeps the session; refresh-on-401 renews the access token.
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30 // 30 days
@@ -60,6 +74,25 @@ export function getRefreshToken(kind: AuthKind): string | null {
 export function clearTokens(kind: AuthKind) {
   deleteCookie(COOKIE[kind].access)
   deleteCookie(COOKIE[kind].refresh)
+}
+
+export function setProfile(kind: AuthKind, profile: Profile) {
+  writeCookie(PROFILE_COOKIE[kind], JSON.stringify(profile))
+}
+
+export function getProfile(kind: AuthKind): Profile | null {
+  const raw = readCookie(PROFILE_COOKIE[kind])
+  if (!raw) return null
+  try {
+    const parsed = JSON.parse(raw) as Partial<Profile>
+    return { name: parsed.name ?? "", email: parsed.email ?? null }
+  } catch {
+    return null
+  }
+}
+
+export function clearProfile(kind: AuthKind) {
+  deleteCookie(PROFILE_COOKIE[kind])
 }
 
 export const TOKEN_COOKIE_NAMES = COOKIE

@@ -2,9 +2,22 @@ import { apiFetch } from "@/lib/api/client"
 import type { TokenPair } from "@/lib/api/types"
 import type { LoginInput, OwnerRegisterInput } from "@/lib/auth/schemas"
 
-// Register/login return the token pair nested under `data.tokens`.
-type TokensResponse = { tokens: TokenPair }
-type TenantLoginResponse = TokensResponse & { tenant_id: string }
+// Register/login return the account profile alongside the token pair (nested
+// under `data`), matching the backend's OwnerAuthResult / TenantAuthResult.
+export type OwnerAuthResult = {
+  owner_id: string
+  owner_user_id: string
+  full_name: string
+  email: string
+  tokens: TokenPair
+}
+
+export type TenantAuthResult = {
+  tenant_id: string
+  owner_id: string
+  full_name: string
+  tokens: TokenPair
+}
 
 export type MyRoom = {
   room_assignment_id: string
@@ -15,26 +28,26 @@ export type MyRoom = {
 }
 
 export function registerOwner(input: OwnerRegisterInput) {
-  return apiFetch<TokensResponse>("/auth/owner/register", {
+  return apiFetch<OwnerAuthResult>("/auth/owner/register", {
     method: "POST",
     body: input,
   })
 }
 
 export function loginOwner(input: LoginInput) {
-  return apiFetch<TokensResponse>("/auth/owner/login", {
+  return apiFetch<OwnerAuthResult>("/auth/owner/login", {
     method: "POST",
     body: input,
   })
 }
 
 export function loginTenant(input: LoginInput) {
-  return apiFetch<TenantLoginResponse>("/auth/login", {
+  return apiFetch<TenantAuthResult>("/auth/tenant/login", {
     method: "POST",
     body: input,
   })
 }
 
 export function getMyRoom() {
-  return apiFetch<MyRoom>("/my-room", { method: "GET", kind: "tenant" })
+  return apiFetch<MyRoom>("/tenant/my-room", { method: "GET", kind: "tenant" })
 }

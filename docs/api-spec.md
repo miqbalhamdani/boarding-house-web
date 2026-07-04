@@ -61,7 +61,7 @@ Request:
 `POST /auth/owner/login`
 
 ### Login Tenant
-`POST /auth/login`
+`POST /auth/tenant/login`
 
 ## Room API
 
@@ -301,7 +301,7 @@ Response:
 `GET /tenant/me`
 
 ### My Room Assignment
-`GET /my-room`
+`GET /tenant/my-room`
 
 ### My Bills
 `GET /tenant/bills?status=unpaid&page=1&limit=20`

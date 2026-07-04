@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,20 @@ export default function TenantDashboardPage() {
     logout()
     router.replace(TENANT_LOGIN)
   }
+
+  // The client clears tokens on a terminal 401, but the middleware guard only
+  // runs on navigation — so a session that dies while on this page must send the
+  // tenant back to login itself.
+  const unauthorized =
+    error instanceof ApiClientError &&
+    (error.status === 401 || error.status === 403)
+
+  useEffect(() => {
+    if (unauthorized) {
+      logout()
+      router.replace(TENANT_LOGIN)
+    }
+  }, [unauthorized, logout, router])
 
   const notFound = error instanceof ApiClientError && error.status === 404
 

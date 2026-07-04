@@ -7,8 +7,10 @@ import {
 } from "@/lib/api/types"
 import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "@/lib/auth/tokens"
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1"
+// Default to a same-origin path so browser requests go through the Next.js
+// rewrite proxy (next.config.ts) instead of hitting the backend cross-origin,
+// which avoids CORS entirely.
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api/v1"
 
 const REFRESH_PATH: Record<AuthKind, string> = {
   owner: "/auth/owner/refresh",

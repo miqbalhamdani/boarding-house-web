@@ -21,6 +21,19 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+
+import { OWNER_LOGIN } from "@/lib/auth/guard"
+import { useAuthStore } from "@/stores/auth-store"
+
+// Initials for the avatar fallback, derived from the display name (or email).
+function initials(name: string, email: string): string {
+  const source = name.trim() || email.trim()
+  if (!source) return "?"
+  const parts = source.split(/[\s.@]+/).filter(Boolean)
+  const letters = parts.slice(0, 2).map((p) => p[0])
+  return letters.join("").toUpperCase() || "?"
+}
 
 export function NavUser({
   user,
@@ -32,6 +45,15 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const logout = useAuthStore((s) => s.logout)
+
+  function onLogout() {
+    logout()
+    router.replace(OWNER_LOGIN)
+  }
+
+  const fallback = initials(user.name, user.email)
 
   return (
     <SidebarMenu>
@@ -44,7 +66,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{fallback}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -65,7 +87,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{fallback}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
@@ -94,7 +116,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={onLogout}>
               <LogOutIcon
               />
               Log out
