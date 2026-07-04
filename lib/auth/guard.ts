@@ -11,11 +11,19 @@ export type GuardInput = {
 export const OWNER_LOGIN = "/owner/login"
 export const OWNER_REGISTER = "/owner/register"
 export const TENANT_LOGIN = "/login"
-export const OWNER_HOME = "/dashboard"
+export const OWNER_HOME = "/owner/dashboard"
 export const TENANT_HOME = "/tenant/dashboard"
 
-// Owner-only areas (dashboard + the future owner resource sections).
-const OWNER_PREFIXES = ["/dashboard", "/rooms", "/tenants", "/bills", "/payments"]
+// Owner-only areas (dashboard + the future owner resource sections). Listed as
+// explicit sub-paths rather than a bare "/owner" so the owner auth pages
+// (/owner/login, /owner/register) are not treated as protected.
+const OWNER_PREFIXES = [
+  "/owner/dashboard",
+  "/owner/rooms",
+  "/owner/tenants",
+  "/owner/bills",
+  "/owner/payments",
+]
 
 // Public auth pages.
 const OWNER_AUTH_PAGES = [OWNER_LOGIN, OWNER_REGISTER]
@@ -38,7 +46,7 @@ export function resolveAuthRedirect(input: GuardInput): string | null {
   }
 
   // Tenant portal: requires a tenant token (an owner token does not grant it).
-  if (matchesPrefix(pathname, ["/tenant"])) {
+  if (matchesPrefix(pathname, [TENANT_HOME])) {
     return hasTenantToken ? null : TENANT_LOGIN
   }
 

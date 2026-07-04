@@ -23,7 +23,7 @@ import {
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 
-import { OWNER_LOGIN } from "@/lib/auth/guard"
+import { OWNER_LOGIN, TENANT_LOGIN } from "@/lib/auth/guard"
 import { useAuthStore } from "@/stores/auth-store"
 
 // Initials for the avatar fallback, derived from the display name (or email).
@@ -46,11 +46,15 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const session = useAuthStore((s) => s.session)
   const logout = useAuthStore((s) => s.logout)
 
   function onLogout() {
+    // Capture the role before logout() clears the session, so tenants and
+    // owners return to their respective login pages.
+    const target = session?.kind === "tenant" ? TENANT_LOGIN : OWNER_LOGIN
     logout()
-    router.replace(OWNER_LOGIN)
+    router.replace(target)
   }
 
   const fallback = initials(user.name, user.email)

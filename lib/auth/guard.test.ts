@@ -20,10 +20,10 @@ describe("resolveAuthRedirect", () => {
   })
 
   it("redirects anonymous users away from owner areas to owner login", () => {
-    expect(resolveAuthRedirect({ pathname: "/dashboard", ...NONE })).toBe(
+    expect(resolveAuthRedirect({ pathname: "/owner/dashboard", ...NONE })).toBe(
       OWNER_LOGIN
     )
-    expect(resolveAuthRedirect({ pathname: "/rooms/123", ...NONE })).toBe(
+    expect(resolveAuthRedirect({ pathname: "/owner/rooms/123", ...NONE })).toBe(
       OWNER_LOGIN
     )
   })
@@ -36,7 +36,7 @@ describe("resolveAuthRedirect", () => {
 
   it("lets an owner into owner areas", () => {
     expect(
-      resolveAuthRedirect({ pathname: "/dashboard", ...OWNER })
+      resolveAuthRedirect({ pathname: "/owner/dashboard", ...OWNER })
     ).toBeNull()
   })
 
@@ -49,7 +49,7 @@ describe("resolveAuthRedirect", () => {
   // Cross-token isolation (acceptance criteria):
   it("rejects a tenant token on an owner route", () => {
     expect(
-      resolveAuthRedirect({ pathname: "/dashboard", ...TENANT })
+      resolveAuthRedirect({ pathname: "/owner/dashboard", ...TENANT })
     ).toBe(OWNER_LOGIN)
   })
 

@@ -22,12 +22,12 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/rooms/:path*",
-    "/tenants/:path*",
-    "/bills/:path*",
-    "/payments/:path*",
-    "/tenant/:path*",
+    "/owner/dashboard/:path*",
+    "/owner/rooms/:path*",
+    "/owner/tenants/:path*",
+    "/owner/bills/:path*",
+    "/owner/payments/:path*",
+    "/tenant/dashboard/:path*",
     "/login",
     "/owner/login",
     "/owner/register",
