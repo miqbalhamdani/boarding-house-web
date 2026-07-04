@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
+import { errorMessage } from "@/lib/api/errors"
 import { ApiClientError } from "@/lib/api/types"
 import { OWNER_HOME, TENANT_HOME } from "@/lib/auth/guard"
 import { setProfile, setOwnerTokens, setTenantTokens } from "@/lib/auth/tokens"
@@ -14,12 +15,6 @@ import {
   registerOwner,
 } from "@/services/auth"
 import { useAuthStore } from "@/stores/auth-store"
-
-function errorMessage(error: unknown): string {
-  return error instanceof ApiClientError
-    ? error.message
-    : "Something went wrong. Please try again."
-}
 
 export function useOwnerRegister() {
   const router = useRouter()
