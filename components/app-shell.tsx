@@ -1,12 +1,17 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { shellConfig, type Role } from "@/lib/nav"
 
-export default function RoomsLayout({
+export function AppShell({
+  role,
   children,
 }: {
+  role: Role
   children: React.ReactNode
 }) {
+  const { navMain, brand, headerTitle } = shellConfig[role]
+
   return (
     <SidebarProvider
       style={
@@ -16,9 +21,9 @@ export default function RoomsLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" brand={brand} navMain={navMain} />
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader title={headerTitle} />
         <div className="flex flex-1 flex-col">{children}</div>
       </SidebarInset>
     </SidebarProvider>
