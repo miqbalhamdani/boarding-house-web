@@ -1,5 +1,9 @@
 import * as v from "valibot"
 
+// Re-exported for backwards compatibility — the generic helper now lives in
+// lib/forms/validate.ts so non-auth modules can reuse it without importing auth.
+export { validate } from "@/lib/forms/validate"
+
 // Form validation schemas. Note: no `owner_id` field anywhere — owner identity
 // is always derived server-side from the token, never sent by the client.
 
@@ -40,25 +44,3 @@ export const ownerRegisterSchema = v.object({
 
 export type LoginInput = v.InferOutput<typeof loginSchema>
 export type OwnerRegisterInput = v.InferOutput<typeof ownerRegisterSchema>
-
-// Runs a schema and returns either the parsed value or a flat field->message map
-// suitable for rendering inline under each input.
-export function validate<TSchema extends v.GenericSchema>(
-  schema: TSchema,
-  input: unknown
-):
-  | { success: true; output: v.InferOutput<TSchema> }
-  | { success: false; errors: Record<string, string> } {
-  const result = v.safeParse(schema, input)
-  if (result.success) {
-    return { success: true, output: result.output }
-  }
-  const errors: Record<string, string> = {}
-  for (const issue of result.issues) {
-    const key = issue.path?.[0]?.key
-    if (typeof key === "string" && !(key in errors)) {
-      errors[key] = issue.message
-    }
-  }
-  return { success: false, errors }
-}
