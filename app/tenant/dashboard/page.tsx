@@ -3,8 +3,6 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
 import {
   Card,
   CardContent,
@@ -12,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useMyRoom } from "@/hooks/use-auth"
 import { ApiClientError } from "@/lib/api/types"
@@ -42,73 +39,56 @@ export default function TenantDashboardPage() {
   const notFound = error instanceof ApiClientError && error.status === 404
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-6 px-4 py-4 md:gap-6 md:py-6 lg:px-6">
-              <h1 className="text-2xl font-bold">My room</h1>
+    <div className="@container/main flex flex-1 flex-col gap-2">
+      <div className="flex flex-col gap-6 px-4 py-4 md:gap-6 md:py-6 lg:px-6">
+        <h1 className="text-2xl font-bold">My room</h1>
 
-              {isPending ? (
-                <Card>
-                  <CardHeader>
-                    <Skeleton className="h-6 w-32" />
-                    <Skeleton className="h-4 w-48" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-4 w-40" />
-                  </CardContent>
-                </Card>
-              ) : isError ? (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      {notFound
-                        ? "No room assigned yet"
-                        : "Unable to load your room"}
-                    </CardTitle>
-                    <CardDescription>
-                      {notFound
-                        ? "You do not have an active room assignment right now."
-                        : error instanceof ApiClientError
-                          ? error.message
-                          : "Please try again in a moment."}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-xl">
-                      Room {data.room_number}
-                    </CardTitle>
-                    <CardDescription>
-                      Your current room assignment
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-base">
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">Monthly rent</span>
-                      <span className="font-semibold">
-                        {formatIDR(data.monthly_rent)}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        {isPending ? (
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+              <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-40" />
+            </CardContent>
+          </Card>
+        ) : isError ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {notFound
+                  ? "No room assigned yet"
+                  : "Unable to load your room"}
+              </CardTitle>
+              <CardDescription>
+                {notFound
+                  ? "You do not have an active room assignment right now."
+                  : error instanceof ApiClientError
+                    ? error.message
+                    : "Please try again in a moment."}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-xl">
+                Room {data.room_number}
+              </CardTitle>
+              <CardDescription>Your current room assignment</CardDescription>
+            </CardHeader>
+            <CardContent className="text-base">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Monthly rent</span>
+                <span className="font-semibold">
+                  {formatIDR(data.monthly_rent)}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
   )
 }
