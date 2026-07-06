@@ -14,6 +14,17 @@ vi.mock("@/hooks/use-tenants", () => ({
   useUpdateTenant: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }))
 
+// TenantDetail also renders a (closed) AssignRoomDialog whose onboarding hooks run
+// on mount (useQueryClient); stubbed so no QueryClientProvider is needed here.
+vi.mock("@/hooks/use-onboarding", () => ({
+  useAssignRoom: vi.fn(() => ({ mutate: vi.fn(), isPending: false, error: null })),
+  useCancelOnboarding: vi.fn(() => ({
+    mutate: vi.fn(),
+    isPending: false,
+    error: null,
+  })),
+}))
+
 const mockUseTenant = vi.mocked(useTenant)
 
 const tenant: Tenant = {

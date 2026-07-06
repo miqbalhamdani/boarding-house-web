@@ -4,6 +4,7 @@ import Link from "next/link"
 import { ArrowLeftIcon } from "lucide-react"
 import { useState } from "react"
 
+import { AssignRoomDialog } from "@/components/onboarding/assign-room-dialog"
 import { TenantFormDialog } from "@/components/tenants/tenant-form"
 import { TenantStatusBadge } from "@/components/tenants/tenant-status-badge"
 import {
@@ -48,6 +49,7 @@ function formatDate(value: string): string {
 export function TenantDetail({ id }: { id: string }) {
   const tenant = useTenant(id)
   const [editOpen, setEditOpen] = useState(false)
+  const [assignOpen, setAssignOpen] = useState(false)
 
   if (tenant.isPending) {
     return (
@@ -206,20 +208,26 @@ export function TenantDetail({ id }: { id: string }) {
         </Card>
       </div>
 
-      {/* Future sections — labeled placeholders. No data is fetched here; the
-          onboarding and billing modules are not built yet. */}
+      {/* Current assignment is the onboarding entry point: assign this tenant to a
+          room (creates the first bill, reserves the room). The billing summary
+          remains a placeholder until the billing module is built. */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Current assignment</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col items-center gap-1 rounded-xl border border-dashed py-10 text-center">
-              <p className="text-base font-medium">No room assigned yet</p>
-              <p className="text-base text-muted-foreground">
-                The tenant&apos;s current room will appear here once the
-                onboarding module is available.
-              </p>
+            <div className="flex flex-col items-center gap-4 rounded-xl border border-dashed py-10 text-center">
+              <div className="flex flex-col gap-1">
+                <p className="text-base font-medium">Not assigned to a room</p>
+                <p className="text-base text-muted-foreground">
+                  Assign {data.full_name} to an available room to start
+                  onboarding and create the first rent bill.
+                </p>
+              </div>
+              <Button size="lg" onClick={() => setAssignOpen(true)}>
+                Assign a room
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -244,6 +252,11 @@ export function TenantDetail({ id }: { id: string }) {
         id={data.id}
         open={editOpen}
         onOpenChange={setEditOpen}
+      />
+      <AssignRoomDialog
+        tenant={data}
+        open={assignOpen}
+        onOpenChange={setAssignOpen}
       />
     </div>
   )
