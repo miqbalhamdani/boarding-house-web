@@ -1,4 +1,9 @@
-import { DoorOpenIcon, LayoutDashboardIcon, UsersIcon } from "lucide-react"
+import {
+  DoorOpenIcon,
+  LayoutDashboardIcon,
+  ReceiptTextIcon,
+  UsersIcon,
+} from "lucide-react"
 
 export type NavItem = {
   title: string
@@ -22,6 +27,7 @@ export const shellConfig: Record<Role, ShellConfig> = {
       { title: "Dashboard", url: "/owner/dashboard", icon: <LayoutDashboardIcon /> },
       { title: "Rooms", url: "/owner/rooms", icon: <DoorOpenIcon /> },
       { title: "Tenants", url: "/owner/tenants", icon: <UsersIcon /> },
+      { title: "Bills", url: "/owner/bills", icon: <ReceiptTextIcon /> },
     ],
   },
   tenant: {
