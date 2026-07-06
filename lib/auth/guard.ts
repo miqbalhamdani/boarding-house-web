@@ -21,6 +21,7 @@ const OWNER_PREFIXES = [
   "/owner/dashboard",
   "/owner/rooms",
   "/owner/tenants",
+  "/owner/onboarding",
   "/owner/bills",
   "/owner/payments",
 ]

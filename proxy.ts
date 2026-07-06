@@ -25,6 +25,7 @@ export const config = {
     "/owner/dashboard/:path*",
     "/owner/rooms/:path*",
     "/owner/tenants/:path*",
+    "/owner/onboarding/:path*",
     "/owner/bills/:path*",
     "/owner/payments/:path*",
     "/tenant/dashboard/:path*",
