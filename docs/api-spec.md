@@ -196,7 +196,13 @@ Rules:
 - bill must not have a successful payment
 
 ### List Payments
-`GET /owner/payments?tenant_id=uuid&month=2026-07&page=1&limit=20`
+`GET /owner/payments?tenant_id=uuid&month=2026-07&source=manual&page=1&limit=20`
+
+Query params:
+- `tenant_id` (UUID, optional)
+- `month` (YYYY-MM, optional) — filters by `payment_date` month
+- `source` (`manual` | `gateway`, optional) — filters by payment source
+- `page`, `limit` (default 1 / 20)
 
 ### Get Payment Detail
 `GET /owner/payments/{payment_id}`

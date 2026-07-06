@@ -1,4 +1,5 @@
 import {
+  BanknoteIcon,
   DoorOpenIcon,
   LayoutDashboardIcon,
   ReceiptTextIcon,
@@ -28,6 +29,7 @@ export const shellConfig: Record<Role, ShellConfig> = {
       { title: "Rooms", url: "/owner/rooms", icon: <DoorOpenIcon /> },
       { title: "Tenants", url: "/owner/tenants", icon: <UsersIcon /> },
       { title: "Bills", url: "/owner/bills", icon: <ReceiptTextIcon /> },
+      { title: "Payments", url: "/owner/payments", icon: <BanknoteIcon /> },
     ],
   },
   tenant: {
