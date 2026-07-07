@@ -26,6 +26,15 @@ const OWNER_PREFIXES = [
   "/owner/payments",
 ]
 
+// Tenant portal areas. Listed as explicit sub-paths rather than a bare "/tenant"
+// so the tenant login page (/login) stays public.
+const TENANT_PREFIXES = [
+  "/tenant/dashboard",
+  "/tenant/bills",
+  "/tenant/payments",
+  "/tenant/payment-result",
+]
+
 // Public auth pages.
 const OWNER_AUTH_PAGES = [OWNER_LOGIN, OWNER_REGISTER]
 
@@ -47,7 +56,7 @@ export function resolveAuthRedirect(input: GuardInput): string | null {
   }
 
   // Tenant portal: requires a tenant token (an owner token does not grant it).
-  if (matchesPrefix(pathname, [TENANT_HOME])) {
+  if (matchesPrefix(pathname, TENANT_PREFIXES)) {
     return hasTenantToken ? null : TENANT_LOGIN
   }
 

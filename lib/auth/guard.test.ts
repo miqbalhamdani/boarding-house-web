@@ -46,6 +46,34 @@ describe("resolveAuthRedirect", () => {
     ).toBeNull()
   })
 
+  it("lets a tenant into every tenant portal route", () => {
+    for (const pathname of [
+      "/tenant/bills",
+      "/tenant/bills/abc",
+      "/tenant/payments",
+      "/tenant/payment-result",
+    ]) {
+      expect(resolveAuthRedirect({ pathname, ...TENANT })).toBeNull()
+    }
+  })
+
+  it("redirects anonymous users away from the new tenant routes", () => {
+    for (const pathname of [
+      "/tenant/bills",
+      "/tenant/bills/abc",
+      "/tenant/payments",
+      "/tenant/payment-result",
+    ]) {
+      expect(resolveAuthRedirect({ pathname, ...NONE })).toBe(TENANT_LOGIN)
+    }
+  })
+
+  it("rejects an owner token on the new tenant routes", () => {
+    expect(resolveAuthRedirect({ pathname: "/tenant/bills", ...OWNER })).toBe(
+      TENANT_LOGIN
+    )
+  })
+
   // Cross-token isolation (acceptance criteria):
   it("rejects a tenant token on an owner route", () => {
     expect(
