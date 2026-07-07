@@ -37,6 +37,8 @@ export const shellConfig: Record<Role, ShellConfig> = {
     headerTitle: "My Portal",
     navMain: [
       { title: "Dashboard", url: "/tenant/dashboard", icon: <LayoutDashboardIcon /> },
+      { title: "My Bills", url: "/tenant/bills", icon: <ReceiptTextIcon /> },
+      { title: "Payments", url: "/tenant/payments", icon: <BanknoteIcon /> },
     ],
   },
 }
