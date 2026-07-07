@@ -47,25 +47,11 @@ import {
   PAYMENT_SOURCES,
   PAYMENT_SOURCE_LABEL,
 } from "@/lib/payments/schemas"
-import { formatIDR } from "@/lib/format"
+import { formatDateTime, formatIDR } from "@/lib/format"
 import type { Payment, PaymentSource } from "@/services/payments"
 
 const PAGE_SIZE = 20
 const ALL_SOURCES = "all"
-
-// RFC3339 → "10 July 2026, 17.00".
-function formatPaymentDate(iso: string): string {
-  if (!iso) return "—"
-  const parsed = new Date(iso)
-  if (Number.isNaN(parsed.getTime())) return iso
-  return parsed.toLocaleString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
-}
 
 function roomLabel(payment: Payment): string {
   const parts = [payment.room_number, payment.room_name].filter(Boolean)
@@ -139,7 +125,7 @@ function buildColumns(): ColumnDef<Payment>[] {
       header: "Paid on",
       cell: ({ row }) => (
         <span className="tabular-nums">
-          {formatPaymentDate(row.original.payment_date)}
+          {formatDateTime(row.original.payment_date)}
         </span>
       ),
     },
