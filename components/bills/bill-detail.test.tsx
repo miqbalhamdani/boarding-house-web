@@ -10,6 +10,12 @@ vi.mock("@/hooks/use-bills", () => ({
   useBill: vi.fn(),
 }))
 
+// The record-payment dialog mounts inside the detail view and calls this hook on
+// render; stub it so the test needs no QueryClientProvider.
+vi.mock("@/hooks/use-payments", () => ({
+  useRecordManualPayment: () => ({ mutate: vi.fn(), isPending: false, error: null }),
+}))
+
 const mockUseBill = vi.mocked(useBill)
 
 const bill: Bill = {
