@@ -39,23 +39,24 @@ function applyTheme(theme: Theme) {
 
 function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",
 }: {
   children: React.ReactNode
   defaultTheme?: Theme
 }) {
-  const [theme, setThemeState] = React.useState<Theme>(() => {
-    if (typeof window === "undefined") {
-      return defaultTheme
-    }
+  const [theme, setThemeState] = React.useState<Theme>(defaultTheme)
 
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null
-    return stored ?? defaultTheme
-  })
-
-  const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">(() =>
-    getSystemTheme()
+  const [systemTheme, setSystemTheme] = React.useState<"light" | "dark">(
+    "light"
   )
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY) as Theme | null
+    if (stored) {
+      setThemeState(stored)
+    }
+    setSystemTheme(getSystemTheme())
+  }, [])
 
   const resolvedTheme =
     theme === "system" ? systemTheme : (theme as "light" | "dark")
